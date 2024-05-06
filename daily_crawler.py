@@ -118,7 +118,7 @@ class DailyCrawler:
         pro = ts.pro_api()
         stock_df = pro.stock_basic(exchange='', list_status='L', fields='ts_code,symbol,name,area,industry,list_date')
         # 将基本信息的索引列表转化为股票代码列表
-        codes = list(stock_df.index)
+        codes = list(stock_df.ts_code)
 
         # 当前日期
         now = datetime.now().strftime('%Y-%m-%d')
