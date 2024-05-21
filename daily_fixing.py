@@ -9,7 +9,6 @@
 普量学院助教微信：niuxiaomi3
 """
 
-
 from datetime import datetime, timedelta
 
 from pymongo import UpdateOne, ASCENDING
@@ -73,13 +72,13 @@ def fill_single_date_is_trading(date, collection_name):
           (date, collection_name), flush=True)
     daily_cursor = DB_CONN[collection_name].find(
         {'date': date},
-        projection={'code': True, 'volume': True, '_id': False},
+        projection={'code': True, 'vol': True, '_id': False},
         batch_size=1000)
 
     update_requests = []
     for daily in daily_cursor:
         # 当日成交量大于0，则为交易状态
-        is_trading = daily['volume'] > 0
+        is_trading = daily['vol'] > 0
 
         update_requests.append(
             UpdateOne(
@@ -115,7 +114,7 @@ def fill_daily_k_at_suspension_days(begin_date=None, end_date=None):
             break
 
         # 找到当日的基本信息
-        basic_cursor = DB_CONN['basic'].find(
+        basic_cursor = DB_CONN['daily'].find(
             {'date': last_trading_date},
             # 填充时需要用到两个字段股票代码code和上市日期timeToMarket，
             # 上市日期用来判断
@@ -178,7 +177,7 @@ def fill_daily_k_at_suspension_days_at_date_one_collection(
                             'open': last_trading_daily['close'],
                             'high': last_trading_daily['close'],
                             'low': last_trading_daily['close'],
-                            'volume': 0,
+                            'vol': 0,
                             'is_trading': False
                         }
                         update_requests.append(
@@ -218,7 +217,6 @@ def fill_au_factor_pre_close(begin_date, end_date):
 
         last_close = -1
         last_au_factor = -1
-
         update_requests = []
         for daily in daily_cursor:
             date = daily['date']
@@ -255,6 +253,6 @@ def fill_au_factor_pre_close(begin_date, end_date):
 
 
 if __name__ == '__main__':
-    fill_au_factor_pre_close('2015-01-01', '2015-12-31')
-    fill_is_trading_between('2015-01-01', '2015-12-31')
-    fill_daily_k_at_suspension_days('2015-01-01', '2015-12-31')
+    #fill_au_factor_pre_close('20240101', '20241231')
+    fill_is_trading_between('20240101', '20241231')
+    fill_daily_k_at_suspension_days('20240101', '20241231')
